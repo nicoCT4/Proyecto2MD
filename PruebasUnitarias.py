@@ -22,11 +22,14 @@ print("Pruebas de MCD superadas.")
 # Pruebas para inverso_modular
 assert inverso_modular(3, 11) == 4, "Error: inverso_modular(3, 11) debería ser 4"
 assert inverso_modular(7, 40) == 23, "Error: inverso_modular(7, 40) debería ser 23"
+
 try:
-   inverso_modular(6, 9)
+   inverso_modular(6, 9)  # El MCD de 6 y 9 es 3, no coprimos, debería dar error
 except ValueError:
    print("Correctamente lanzó un error para inverso_modular(6, 9)")
+
 print("Pruebas de inverso_modular superadas.")
+
 
 # Pruebas para generar_llaves
 llave_publica, llave_privada = generar_llaves(rango_inferior, rango_superior)
