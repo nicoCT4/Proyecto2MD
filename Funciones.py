@@ -22,11 +22,10 @@ def mcd(a, b):
       a, b = b,a
    
    #Ecuación de Euclides
-   else:
-      while b != 0:  # Mientras b no sea 0 se ejecuta el ciclo
-         r = a % b # Se calcula el residuo de la división de a entre b
-         a = b # Se asigna el valor de b a a
-         b = r # Se asigna el valor de r a b
+   while b != 0:  # Mientras b no sea 0 se ejecuta el ciclo
+      r = a % b # Se calcula el residuo de la división de a entre b
+      a = b # Se asigna el valor de b a a
+      b = r # Se asigna el valor de r a b
    return a # Se retorna el valor de a
 
 def inverso_modular(e,n):
@@ -104,7 +103,7 @@ def generar_llaves(rango_inferior, rango_superior):
    llave_privada = (n,d)
 
    #Se retornan las llaves
-   return llave_publica and llave_privada
+   return llave_publica, llave_privada
 
 #def encriptar(caracter, llave_publica):
 
