@@ -45,3 +45,26 @@ else:
    print("Llave pública:", llave_publica)
    print("Llave privada:", llave_privada)
 print("Pruebas de generación de llaves superadas.")
+
+
+
+# Pruebas para el proceso de encriptación y descriptación:
+# Claves de prueba
+public_key = (17, 3233)
+private_key = (2753, 3233)
+
+# Pruebas para encriptar y desencriptar
+message = "SIUUU AMIGOS"
+print(f"Mensaje original: {message}")
+
+# Cifrado
+blocksEncrypted = encriptar(message, *public_key)
+assert isinstance(blocksEncrypted, list) and all(isinstance(block, int) for block in blocksEncrypted), "Error: Los bloques cifrados deben ser una lista de enteros"
+print(f"Bloques cifrados: {blocksEncrypted}")
+
+# Descifrado
+DescryptedMessage = desencriptar(blocksEncrypted, *private_key)
+assert DescryptedMessage == message, f"Error: El mensaje descifrado '{DescryptedMessage}' no coincide con el mensaje original '{message}'"
+print(f"Mensaje descifrado: {DescryptedMessage}")
+
+print("Pruebas de encriptación y desencriptación superadas.")

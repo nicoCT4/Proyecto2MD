@@ -94,26 +94,29 @@ def generar_llaves(rango_inferior, rango_superior):
    #Se retornan las llaves
    return llave_publica, llave_privada
 
-def encriptar(caracter, e, n): 
-   concatValues = ""
-   blocks = []
-   for char in caracter:
-      concatValues += str(ord(char))
-   print(concatValues)
-      
-   if int(concatValues) > n:
-      strMessage = str(concatValues)
-      blockSize = len(str(n)) - 1 #Tamaño del bloque menor a n
-      blocks = [int(strMessage[i:i+blockSize]) for i in range(0, len(strMessage), blockSize)]
-   else:
-      blocks.append(int(concatValues))
-      
-   encryptedBlocks = [pow(block, e, n) for block in blocks]
-   return encryptedBlocks
-# Compuesto por e y n
-public_key = (65454, 999989)
-e, n = public_key
-print(encriptar("Holaa", e, n))
+def encriptar(caracter, e, n):
+    concatValues = ""
+    blocks = []
+    # Converte cada caracter en valor ASCII con al menos 3 digitos
+    for char in caracter:
+        concatValues += str(ord(char)).zfill(3) 
+    # Dividir en bloques si el número es mayor que n
+    if int(concatValues) > n:
+        blockSize = len(str(n)) - 1  
+        blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
+    else:
+        blocks.append(int(concatValues))
+    # Cifrar cada bloque con formula c = m^n mod(n) pow(base, exp, mod)
+    encryptedBlocks = [pow(block, e, n) for block in blocks]
+    return encryptedBlocks
 
-#def desencriptar(caracter_encriptado, llave_privada):
+def desencriptar(blocks, d, n):
+   # Descifrar con formula m = c^d mod(n) pow(base, exp, mod)
+   decryptBlocks = [pow(block, d, n) for block in blocks]
+   fullMessage = ''.join(str(block).zfill(3) for block in decryptBlocks) # Mangener lontitud minima de 3
+   # Convierte en ASCII de nuevo los valores.
+   descryptMessage = ''.join(
+      chr(int(fullMessage[i:i+3])) for i in range(0, len(fullMessage), 3)
+   )
+   return descryptMessage
 
