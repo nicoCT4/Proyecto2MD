@@ -94,7 +94,26 @@ def generar_llaves(rango_inferior, rango_superior):
    #Se retornan las llaves
    return llave_publica, llave_privada
 
-#def encriptar(caracter, llave_publica):
+def encriptar(caracter, e, n): 
+   concatValues = ""
+   blocks = []
+   for char in caracter:
+      concatValues += str(ord(char))
+   print(concatValues)
+      
+   if int(concatValues) > n:
+      strMessage = str(concatValues)
+      blockSize = len(str(n)) - 1 #Tamaño del bloque menor a n
+      blocks = [int(strMessage[i:i+blockSize]) for i in range(0, len(strMessage), blockSize)]
+   else:
+      blocks.append(int(concatValues))
+      
+   encryptedBlocks = [pow(block, e, n) for block in blocks]
+   return encryptedBlocks
+# Compuesto por e y n
+public_key = (65454, 999989)
+e, n = public_key
+print(encriptar("Holaa", e, n))
 
 #def desencriptar(caracter_encriptado, llave_privada):
 
