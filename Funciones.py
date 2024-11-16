@@ -29,33 +29,46 @@ def mcd(a, b):
       b = r # Se asigna el valor de r a b
    return a # Se retorna el valor de a
 
-def inverso_modular(e, n):
-   # Verificar que los valores ingresados sean positivos
-   if e <= 0 or n <= 0:
+def inverso_modular(e,n):
+   #verificar que sean positivos
+   if e <=0 or n <=0:
       raise ValueError("Los valores ingresados tienen que ser positivos")
    
-   # Verificar que el mcd sea 1 (es decir, que e y n sean coprimos)
-   if mcd(e, n) != 1:
+   #Verificamos que el mcd sea 1
+   if mcd(e,n)!=1:
       raise ValueError("Los valores ingresados no son coprimos, por lo tanto no tienen inverso modular")
    
-   # Inicialización del Algoritmo Extendido de Euclides
-   c, d = n, e
-   t1, t2 = 0, 1  # Inicialmente t1 = 0, t2 = 1, estos representan los coeficientes de la combinación lineal
+   #Algoritmo extendido de Euclides
+   c = e
+   d = n
+   #Matriz identidad
+   m = np.array([
+         [1,0],
+         [0,1]
+   ])
 
-   while d > 0:
-      q = c // d  # Cociente de la división entera
-      r = c % d   # Residuo de la división
-      c, d = d, r  # Actualizar residuos
 
-      # Actualizar los coeficientes t
-      t = t1 - q * t2
-      t1, t2 = t2, t
+   while d != 0:
+      q = c//d #División entera
+      r = c%d #Residuo
+      c = d #Se asigna el valor de d a c
+      d = r #Se asigna el valor de r a d
 
-   # Ajustar el valor del inverso si es negativo
-   if t1 < 0:
-      t1 = t1 + n
+      #Matriz de transformación
+      Q1 = np.array([
+         [0,1],
+         [1,-q]
+      ])
 
-   return t1
+      #Multiplicación de matrices
+      m = Q1@m
+
+   x = m[0][0]
+
+   if x < 0:
+      x = (x+n)%n
+
+   return x
 
 
 def generar_llaves(rango_inferior, rango_superior):
@@ -95,20 +108,20 @@ def generar_llaves(rango_inferior, rango_superior):
    return llave_publica, llave_privada
 
 def encriptar(caracter, e, n):
-    concatValues = ""
-    blocks = []
-    # Converte cada caracter en valor ASCII con al menos 3 digitos
-    for char in caracter:
-        concatValues += str(ord(char)).zfill(3) 
-    # Dividir en bloques si el número es mayor que n
-    if int(concatValues) > n:
-        blockSize = len(str(n)) - 1  
-        blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
-    else:
-        blocks.append(int(concatValues))
-    # Cifrar cada bloque con formula c = m^n mod(n) pow(base, exp, mod)
-    encryptedBlocks = [pow(block, e, n) for block in blocks]
-    return encryptedBlocks
+   concatValues = ""
+   blocks = []
+   # Converte cada caracter en valor ASCII con al menos 3 digitos
+   for char in caracter:
+      concatValues += str(ord(char)).zfill(3) 
+   # Dividir en bloques si el número es mayor que n
+   if int(concatValues) > n:
+      blockSize = len(str(n)) - 1  
+      blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
+   else:
+      blocks.append(int(concatValues))
+   # Cifrar cada bloque con formula c = m^n mod(n) pow(base, exp, mod)
+   encryptedBlocks = [pow(block, e, n) for block in blocks]
+   return encryptedBlocks
 
 def desencriptar(blocks, d, n):
    # Descifrar con formula m = c^d mod(n) pow(base, exp, mod)
