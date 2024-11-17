@@ -125,7 +125,7 @@ def encriptar(caracter, e, n):
 
 def desencriptar(blocks, d, n):
    # Descifrar con formula m = c^d mod(n) pow(base, exp, mod)
-   decryptBlocks = [pow(block, d, n) for block in blocks]
+   decryptBlocks = [pow(int(block), int(d), int(n)) for block in blocks]
    fullMessage = ''.join(str(block).zfill(3) for block in decryptBlocks) # Mangener lontitud minima de 3
    # Convierte en ASCII de nuevo los valores.
    descryptMessage = ''.join(
