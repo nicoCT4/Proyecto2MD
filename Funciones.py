@@ -2,6 +2,19 @@ import random as r
 import numpy as np
 
 def generar_primo(rango_inferior, rango_superior):
+      """
+         Genera un número primo aleatorio dentro de un rango dado.
+
+      Args:
+         rango_inferior (int): Límite inferior del rango de búsqueda.
+         rango_superior (int): Límite superior del rango de búsqueda.
+
+      Returns:
+         int: Un número primo aleatorio dentro del rango especificado.
+
+      Raises:
+         ValueError: Si no se puede encontrar un número primo dentro del rango.
+      """
       while True:
          numero = r.randint(rango_inferior, rango_superior)
          if numero > 1:
@@ -13,6 +26,19 @@ def generar_primo(rango_inferior, rango_superior):
                   return numero
 
 def mcd(a, b):
+   """
+   Calcula el máximo común divisor (MCD) de dos números utilizando el algoritmo de Euclides.
+
+   Args:
+      a (int): Primer número entero positivo.
+      b (int): Segundo número entero positivo.
+
+   Returns:
+      int: El MCD de los números proporcionados.
+
+   Raises:
+      ValueError: Si los valores ingresados no son positivos.
+   """
    #Se verifica que los valores ingresados sean positivos
    if a <= 0 or b <= 0:
       raise ValueError("Los valores ingresados tienen que ser positivos")
@@ -29,6 +55,19 @@ def mcd(a, b):
    return a # Se retorna el valor de a
 
 def inverso_modular(e, n):
+   """
+   Calcula el inverso modular de e módulo n utilizando el algoritmo extendido de Euclides.
+
+   Args:
+      e (int): Número entero cuyo inverso modular se calcula.
+      n (int): Módulo de la operación.
+
+   Returns:
+      int: Inverso modular de e módulo n.
+
+   Raises:
+      ValueError: Si los valores ingresados no son positivos o no son coprimos.
+   """
    #verificar que sean positivos
    if e <= 0 or n <= 0:
       raise ValueError("Los valores ingresados tienen que ser positivos")
@@ -68,6 +107,21 @@ def inverso_modular(e, n):
    return x
 
 def generar_llaves(rango_inferior, rango_superior):
+   """
+   Genera un par de claves RSA (pública y privada).
+
+   Args:
+      rango_inferior (int): Límite inferior para la búsqueda de números primos.
+      rango_superior (int): Límite superior para la búsqueda de números primos.
+
+   Returns:
+      tuple: Una tupla que contiene:
+         - llave_publica (tuple): La llave pública (n, e).
+         - llave_privada (tuple): La llave privada (n, d).
+
+   Raises:
+      ValueError: Si no se pueden generar llaves válidas en el rango dado.
+   """
    #Generar primos p y q
    p = generar_primo(rango_inferior, rango_superior)
    q = generar_primo(rango_inferior, rango_superior)
@@ -104,6 +158,20 @@ def generar_llaves(rango_inferior, rango_superior):
    return llave_publica, llave_privada
 
 def encriptar(mensaje, e, n):
+   """
+      Encripta un número utilizando la llave pública RSA.
+
+   Args:
+      mensaje (int): El número a encriptar.
+      e (int): Exponente público.
+      n (int): Módulo público.
+
+   Returns:
+      int: Número encriptado.
+
+   Raises:
+      ValueError: Si el número a encriptar es mayor o igual a n.
+   """
    if int(mensaje) >= n:
       raise ValueError("El número a encriptar debe ser menor que n.")
    # Aplicamos la fórmula de encriptación
@@ -125,6 +193,17 @@ def encriptar(mensaje, e, n):
    # return encryptedBlocks
 
 def desencriptar(mensaje_encriptado, d, n):
+   """
+   Desencripta un número encriptado utilizando la llave privada RSA.
+
+   Args:
+      mensaje_encriptado (int): El número encriptado.
+      d (int): Exponente privado.
+      n (int): Módulo público.
+
+   Returns:
+      int: Número desencriptado.
+   """
    mensaje_desencriptado = pow(int(mensaje_encriptado), d, n)
    return mensaje_desencriptado
    #Codigo para palabras
