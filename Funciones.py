@@ -1,4 +1,3 @@
-
 import random as r
 import numpy as np
 
@@ -30,39 +29,43 @@ def mcd(a, b):
    return a # Se retorna el valor de a
 
 def inverso_modular(e, n):
-   # Verificar que sean positivos
+   #verificar que sean positivos
    if e <= 0 or n <= 0:
       raise ValueError("Los valores ingresados tienen que ser positivos")
-
-   # Verificamos que el MCD sea 1
+   
+   #Verificamos que el mcd sea 1
    if mcd(e, n) != 1:
       raise ValueError("Los valores ingresados no son coprimos, por lo tanto no tienen inverso modular")
-
-   # Algoritmo extendido de Euclides usando matrices
-   # Definimos variables para el algoritmo
-   c, d = e, n
-   # Inicializamos las matrices como listas para mayor eficiencia
-   m = [[1, 0], [0, 1]]
+   
+   #Algoritmo extendido de Euclides
+   c = e
+   d = n
+   #Matriz identidad
+   m = np.array([
+         [1, 0],
+         [0, 1]
+   ], dtype=int)
 
    while d != 0:
-      q = c // d  # División entera
-      r = c % d   # Residuo
-      c, d = d, r  # Actualización de c y d
+      q = c // d # División entera
+      r = c % d # Residuo
+      c, d = d, r # Actualización de c y d
 
-      # Actualizamos la matriz utilizando las operaciones lineales correspondientes
-      nueva_m = [[m[1][0], m[1][1]], [m[0][0] - q * m[1][0], m[0][1] - q * m[1][1]]]
-      m = nueva_m  # Asignamos la nueva matriz
+      # Matriz de transformación
+      Q1 = np.array([
+         [0, 1],
+         [1, -q]
+      ], dtype=int)
 
-   # El valor del inverso modular es m[0][0]
-   x = m[0][0]
+      # Multiplicación de matrices
+      m = Q1 @ m
 
-   # Si x es negativo, lo ajustamos al rango positivo de n
+   x = int(m[0][0])
+
    if x < 0:
       x = (x + n) % n
 
    return x
-
-
 
 def generar_llaves(rango_inferior, rango_superior):
    #Generar primos p y q
@@ -74,28 +77,28 @@ def generar_llaves(rango_inferior, rango_superior):
       q = generar_primo(rango_inferior, rango_superior)
 
    #Calcular n
-   n = p*q
+   n = p * q
 
    #Calcular phi
-   phi = (p-1)*(q-1)
+   phi = (p - 1) * (q - 1)
 
-   #Generar e aleatorio entre 1 < e < phi y el mcd(e,phi) == 1
-   e = r.randint(2,phi - 1)
-   while mcd(e,phi)!=1:
-      e = r.randint(2,phi - 1)
+   #Generar e aleatorio entre 1 < e < phi y el mcd(e, phi) == 1
+   e = r.randint(2, phi - 1)
+   while mcd(e, phi) != 1:
+      e = r.randint(2, phi - 1)
    
    #Calcular d el inverso modular de e
-   d = inverso_modular(e,phi)
+   d = inverso_modular(e, phi)
 
-   if d == None:
-      e = r.randint(2,phi - 1)
-      while mcd(e,phi)!=1:
-         e = r.randint(2,phi - 1)
-      d = inverso_modular(e,phi)
+   if d is None:
+      e = r.randint(2, phi - 1)
+      while mcd(e, phi) != 1:
+         e = r.randint(2, phi - 1)
+      d = inverso_modular(e, phi)
    
    #Llaves
-   llave_publica = (n,e)
-   llave_privada = (n,d)
+   llave_publica = (n, e)
+   llave_privada = (n, d)
 
    #Se retornan las llaves
    return llave_publica, llave_privada
@@ -112,23 +115,26 @@ def encriptar(caracter, e, n):
       blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
    else:
       blocks.append(int(concatValues))
-   # Cifrar cada bloque con formula c = m^n mod(n) pow(base, exp, mod)
+   # Cifrar cada bloque con formula c = m^e mod(n) usando pow(base, exp, mod)
    encryptedBlocks = [pow(block, e, n) for block in blocks]
    return encryptedBlocks
 
 def desencriptar(blocks, d, n):
-   # Descifrar cada bloque con la fórmula m = c^d mod(n) usando pow(base, exp, mod)
-   decrypt_blocks = [pow(int(block), d, n) for block in blocks]
-
-   # Convertir los bloques descifrados en un solo string de valores ASCII
-   full_message = ''.join(str(block).zfill(3) for block in decrypt_blocks)
-
+   # Descifrar con formula m = c^d mod(n) usando pow(base, exp, mod)
+   decrypt_blocks = [pow(int(block), int(d), int(n)) for block in blocks]
+   full_message = ''.join(str(block).zfill(3) for block in decrypt_blocks) # Mantener longitud mínima de 3
+   
    # Convertir cada grupo de 3 dígitos en el carácter ASCII correspondiente
    decrypted_message = ''
    for i in range(0, len(full_message), 3):
       try:
          ascii_value = int(full_message[i:i + 3])
-         decrypted_message += chr(ascii_value)
+         # Asegurarse de que el valor ASCII esté en el rango válido
+         if 32 <= ascii_value <= 126:  # Solo caracteres imprimibles
+            decrypted_message += chr(ascii_value)
+         else:
+            print(f"Error: valor {ascii_value} fuera del rango ASCII imprimible.")
+            return None
       except ValueError:
          # Capturar un error si el valor no está dentro del rango ASCII
          print(f"Error: valor {full_message[i:i + 3]} fuera del rango ASCII.")
@@ -139,5 +145,3 @@ def desencriptar(blocks, d, n):
          return None
 
    return decrypted_message
-
-
