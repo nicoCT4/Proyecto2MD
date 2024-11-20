@@ -103,45 +103,53 @@ def generar_llaves(rango_inferior, rango_superior):
    #Se retornan las llaves
    return llave_publica, llave_privada
 
-def encriptar(caracter, e, n):
-   concatValues = ""
-   blocks = []
-   # Converte cada caracter en valor ASCII con al menos 3 digitos
-   for char in caracter:
-      concatValues += str(ord(char)).zfill(3) 
-   # Dividir en bloques si el número es mayor que n
-   if int(concatValues) > n:
-      blockSize = len(str(n)) - 1  
-      blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
-   else:
-      blocks.append(int(concatValues))
-   # Cifrar cada bloque con formula c = m^e mod(n) usando pow(base, exp, mod)
-   encryptedBlocks = [pow(block, e, n) for block in blocks]
-   return encryptedBlocks
+def encriptar(mensaje, e, n):
+   if int(mensaje) >= n:
+      raise ValueError("El número a encriptar debe ser menor que n.")
+   # Aplicamos la fórmula de encriptación
+   mensaje_encriptado = pow(int(mensaje), e, n)
+   return mensaje_encriptado
+   # concatValues = ""
+   # blocks = []
+   # # Converte cada caracter en valor ASCII con al menos 3 digitos
+   # for char in caracter:
+   #    concatValues += str(ord(char)).zfill(3) 
+   # # Dividir en bloques si el número es mayor que n
+   # if int(concatValues) > n:
+   #    blockSize = len(str(n)) - 1  
+   #    blocks = [int(concatValues[i:i+blockSize]) for i in range(0, len(concatValues), blockSize)]
+   # else:
+   #    blocks.append(int(concatValues))
+   # # Cifrar cada bloque con formula c = m^e mod(n) usando pow(base, exp, mod)
+   # encryptedBlocks = [pow(block, e, n) for block in blocks]
+   # return encryptedBlocks
 
-def desencriptar(blocks, d, n):
-   # Descifrar con formula m = c^d mod(n) usando pow(base, exp, mod)
-   decrypt_blocks = [pow(int(block), int(d), int(n)) for block in blocks]
-   full_message = ''.join(str(block).zfill(3) for block in decrypt_blocks) # Mantener longitud mínima de 3
+def desencriptar(mensaje_encriptado, d, n):
+   mensaje_desencriptado = pow(int(mensaje_encriptado), d, n)
+   return mensaje_desencriptado
+   #Codigo para palabras
+   # # Descifrar con formula m = c^d mod(n) usando pow(base, exp, mod)
+   # decrypt_blocks = [pow(int(block), int(d), int(n)) for block in blocks]
+   # full_message = ''.join(str(block).zfill(3) for block in decrypt_blocks) # Mantener longitud mínima de 3
    
-   # Convertir cada grupo de 3 dígitos en el carácter ASCII correspondiente
-   decrypted_message = ''
-   for i in range(0, len(full_message), 3):
-      try:
-         ascii_value = int(full_message[i:i + 3])
-         # Asegurarse de que el valor ASCII esté en el rango válido
-         if 32 <= ascii_value <= 126:  # Solo caracteres imprimibles
-            decrypted_message += chr(ascii_value)
-         else:
-            print(f"Error: valor {ascii_value} fuera del rango ASCII imprimible.")
-            return None
-      except ValueError:
-         # Capturar un error si el valor no está dentro del rango ASCII
-         print(f"Error: valor {full_message[i:i + 3]} fuera del rango ASCII.")
-         return None
-      except OverflowError:
-         # Capturar un error si el valor es demasiado grande para convertirse en un carácter
-         print(f"Error: valor {full_message[i:i + 3]} es demasiado grande.")
-         return None
+   # # Convertir cada grupo de 3 dígitos en el carácter ASCII correspondiente
+   # decrypted_message = ''
+   # for i in range(0, len(full_message), 3):
+   #    try:
+   #       ascii_value = int(full_message[i:i + 3])
+   #       # Asegurarse de que el valor ASCII esté en el rango válido
+   #       if 32 <= ascii_value <= 126:  # Solo caracteres imprimibles
+   #          decrypted_message += chr(ascii_value)
+   #       else:
+   #          print(f"Error: valor {ascii_value} fuera del rango ASCII imprimible.")
+   #          return None
+   #    except ValueError:
+   #       # Capturar un error si el valor no está dentro del rango ASCII
+   #       print(f"Error: valor {full_message[i:i + 3]} fuera del rango ASCII.")
+   #       return None
+   #    except OverflowError:
+   #       # Capturar un error si el valor es demasiado grande para convertirse en un carácter
+   #       print(f"Error: valor {full_message[i:i + 3]} es demasiado grande.")
+   #       return None
 
-   return decrypted_message
+   # return decrypted_message
