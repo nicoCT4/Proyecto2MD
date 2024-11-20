@@ -1,4 +1,4 @@
-from Funciones import generar_llaves, encriptar, desencriptar
+from Funciones import *
 
 def main():
     print("=== Sistema de Encriptación RSA ===\n")

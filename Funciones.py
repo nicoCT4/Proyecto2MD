@@ -29,46 +29,39 @@ def mcd(a, b):
       b = r # Se asigna el valor de r a b
    return a # Se retorna el valor de a
 
-def inverso_modular(e,n):
-   #verificar que sean positivos
-   if e <=0 or n <=0:
+def inverso_modular(e, n):
+   # Verificar que sean positivos
+   if e <= 0 or n <= 0:
       raise ValueError("Los valores ingresados tienen que ser positivos")
-   
-   #Verificamos que el mcd sea 1
-   if mcd(e,n)!=1:
-      raise ValueError("Los valores ingresados no son coprimos, por lo tanto no tienen inverso modular")
-   
-   #Algoritmo extendido de Euclides
-   c = e
-   d = n
-   #Matriz identidad
-   m = np.array([
-         [1,0],
-         [0,1]
-   ])
 
+   # Verificamos que el MCD sea 1
+   if mcd(e, n) != 1:
+      raise ValueError("Los valores ingresados no son coprimos, por lo tanto no tienen inverso modular")
+
+   # Algoritmo extendido de Euclides usando matrices
+   # Definimos variables para el algoritmo
+   c, d = e, n
+   # Inicializamos las matrices como listas para mayor eficiencia
+   m = [[1, 0], [0, 1]]
 
    while d != 0:
-      q = c//d #División entera
-      r = c%d #Residuo
-      c = d #Se asigna el valor de d a c
-      d = r #Se asigna el valor de r a d
+      q = c // d  # División entera
+      r = c % d   # Residuo
+      c, d = d, r  # Actualización de c y d
 
-      #Matriz de transformación
-      Q1 = np.array([
-         [0,1],
-         [1,-q]
-      ])
+      # Actualizamos la matriz utilizando las operaciones lineales correspondientes
+      nueva_m = [[m[1][0], m[1][1]], [m[0][0] - q * m[1][0], m[0][1] - q * m[1][1]]]
+      m = nueva_m  # Asignamos la nueva matriz
 
-      #Multiplicación de matrices
-      m = Q1@m
-
+   # El valor del inverso modular es m[0][0]
    x = m[0][0]
 
+   # Si x es negativo, lo ajustamos al rango positivo de n
    if x < 0:
-      x = (x+n)%n
+      x = (x + n) % n
 
    return x
+
 
 
 def generar_llaves(rango_inferior, rango_superior):
@@ -124,12 +117,27 @@ def encriptar(caracter, e, n):
    return encryptedBlocks
 
 def desencriptar(blocks, d, n):
-   # Descifrar con formula m = c^d mod(n) pow(base, exp, mod)
-   decryptBlocks = [pow(int(block), int(d), int(n)) for block in blocks]
-   fullMessage = ''.join(str(block).zfill(3) for block in decryptBlocks) # Mangener lontitud minima de 3
-   # Convierte en ASCII de nuevo los valores.
-   descryptMessage = ''.join(
-      chr(int(fullMessage[i:i+3])) for i in range(0, len(fullMessage), 3)
-   )
-   return descryptMessage
+   # Descifrar cada bloque con la fórmula m = c^d mod(n) usando pow(base, exp, mod)
+   decrypt_blocks = [pow(int(block), d, n) for block in blocks]
+
+   # Convertir los bloques descifrados en un solo string de valores ASCII
+   full_message = ''.join(str(block).zfill(3) for block in decrypt_blocks)
+
+   # Convertir cada grupo de 3 dígitos en el carácter ASCII correspondiente
+   decrypted_message = ''
+   for i in range(0, len(full_message), 3):
+      try:
+         ascii_value = int(full_message[i:i + 3])
+         decrypted_message += chr(ascii_value)
+      except ValueError:
+         # Capturar un error si el valor no está dentro del rango ASCII
+         print(f"Error: valor {full_message[i:i + 3]} fuera del rango ASCII.")
+         return None
+      except OverflowError:
+         # Capturar un error si el valor es demasiado grande para convertirse en un carácter
+         print(f"Error: valor {full_message[i:i + 3]} es demasiado grande.")
+         return None
+
+   return decrypted_message
+
 
